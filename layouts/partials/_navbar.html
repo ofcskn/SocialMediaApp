@@ -1,58 +1,88 @@
-<nav class="navbar navbar-expand-lg bg-light mb-3">
-  <div class="container">
-    <div class="w-100 d-flex justify-content-between">
-      <a class="navbar-brand" href="/"><b>Socipoki</b></a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <form class="d-flex" method="get" action="{% url 'core:search' %}" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" name="q" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/explore">Explore</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'post:create' %}">Share a Post</a>
-          </li>
-          {% if user.is_authenticated %}
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="/" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Account
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item"
-                  href="{% url 'core:get_user' user_name=user.username %}">@{{user.username}}</a>
-              </li>
-              <li><a class="dropdown-item" href="{% url 'account:profile' %}">Edit Profile</a></li>
-              <li><a class="dropdown-item" href="{% url 'core:liked_posts_of_user' user_name=user.username %}">Liked</a>
-              </li>
-              <li><a class="dropdown-item" href="{% url 'core:saved_posts_of_user' user_name=user.username %}">Saved</a>
-              </li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" href="{% url 'account:logout' %}">Log Out</a></li>
-            </ul>
-          </li>
-          {% else %}
-          <li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-outline-success" href="{% url 'account:register' %}">Register</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-success text-white" href="{% url 'account:login' %}">Login</a>
-          </li>
-          </li>
-          {% endif %}
-        </ul>
+{% load static %}
+
+<!-- ═══ Desktop Left Sidebar ═══ -->
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-full w-[244px] border-r border-ig-border bg-white z-50 px-3 py-5">
+
+  <a href="/" class="ig-logo px-3 mb-6 block">Socipoki</a>
+
+  <nav class="flex flex-col gap-0.5 flex-1">
+    {% if user.is_authenticated %}
+
+    <a href="/" class="nav-link-item {% if request.path == '/' %}active{% endif %}">
+      <i class="fas fa-home"></i><span>Home</span>
+    </a>
+
+    <a href="/explore" class="nav-link-item {% if request.path == '/explore' %}active{% endif %}">
+      <i class="fas fa-compass"></i><span>Explore</span>
+    </a>
+
+    <a href="{% url 'core:search' %}" class="nav-link-item {% if '/search' in request.path %}active{% endif %}">
+      <i class="fas fa-search"></i><span>Search</span>
+    </a>
+
+    <a href="{% url 'post:create' %}" class="nav-link-item {% if '/post/create' in request.path %}active{% endif %}">
+      <i class="fas fa-plus-square"></i><span>Create</span>
+    </a>
+
+    <a href="{% url 'core:get_user' user_name=user.username %}" class="nav-link-item">
+      <div class="w-6 h-6 rounded-full overflow-hidden border border-ig-border flex-shrink-0">
+        <img class="w-full h-full object-cover"
+          src="/media/{% if user.avatar %}{{user.avatar}}{% else %}profile/default.png{% endif %}" alt="">
       </div>
-    </div>
+      <span>Profile</span>
+    </a>
+
+    {% else %}
+
+    <a href="{% url 'account:login' %}" class="nav-link-item">
+      <i class="fas fa-sign-in-alt"></i><span>Log In</span>
+    </a>
+    <a href="{% url 'account:register' %}" class="nav-link-item">
+      <i class="fas fa-user-plus"></i><span>Sign Up</span>
+    </a>
+
+    {% endif %}
+  </nav>
+
+  {% if user.is_authenticated %}
+  <div class="flex flex-col gap-0.5 pt-4 border-t border-ig-border">
+    <a href="{% url 'account:profile' %}" class="nav-link-item text-sm" style="color: var(--ig-text-secondary);">
+      <i class="fas fa-cog"></i><span>Settings</span>
+    </a>
+    <a href="{% url 'account:logout' %}" class="nav-link-item text-sm" style="color: var(--ig-text-secondary);">
+      <i class="fas fa-sign-out-alt"></i><span>Log Out</span>
+    </a>
   </div>
+  {% endif %}
+</aside>
+
+<!-- ═══ Mobile Bottom Nav ═══ -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-ig-border z-50 flex items-center justify-around px-2 py-2">
+  {% if user.is_authenticated %}
+  <a href="/" class="flex items-center justify-center p-2 {% if request.path == '/' %}text-black{% else %}text-ig-secondary{% endif %}">
+    <i class="fas fa-home text-2xl"></i>
+  </a>
+  <a href="/explore" class="flex items-center justify-center p-2 {% if request.path == '/explore' %}text-black{% else %}text-ig-secondary{% endif %}">
+    <i class="fas fa-compass text-2xl"></i>
+  </a>
+  <a href="{% url 'post:create' %}" class="flex items-center justify-center p-2 text-ig-secondary">
+    <i class="fas fa-plus-square text-2xl"></i>
+  </a>
+  <a href="{% url 'core:search' %}" class="flex items-center justify-center p-2 text-ig-secondary">
+    <i class="fas fa-search text-2xl"></i>
+  </a>
+  <a href="{% url 'core:get_user' user_name=user.username %}" class="flex items-center justify-center p-2 text-ig-secondary">
+    <div class="w-7 h-7 rounded-full overflow-hidden border border-ig-border">
+      <img class="w-full h-full object-cover"
+        src="/media/{% if user.avatar %}{{user.avatar}}{% else %}profile/default.png{% endif %}" alt="">
+    </div>
+  </a>
+  {% else %}
+  <a href="{% url 'account:login' %}" class="flex items-center justify-center p-2 text-ig-secondary">
+    <i class="fas fa-sign-in-alt text-2xl"></i>
+  </a>
+  <a href="{% url 'account:register' %}" class="flex items-center justify-center p-2 text-ig-secondary">
+    <i class="fas fa-user-plus text-2xl"></i>
+  </a>
+  {% endif %}
 </nav>

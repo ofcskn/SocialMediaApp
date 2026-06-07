@@ -1,60 +1,82 @@
 {% extends "base.html" %}
 {% load static %}
 {% block pageTitle %}{{ title }}{% endblock %}
+
 {% block content %}
+<div class="max-w-[935px] mx-auto px-4 pt-6">
+  <div class="flex gap-8 justify-center lg:justify-start">
 
-<div class="row">
-    <div class="col-md-8">
-        {% if posts|length > 0 %}
-            {% for post in posts %}
-            {% include "post/partials/_post.html" with post=post %}
-            {%endfor%}
-        {% else %}
-        <p>No posts</p>
-        {% endif %}
+    <!-- Feed -->
+    <div class="w-full max-w-[470px]">
+      {% if posts|length > 0 %}
+        {% for post in posts %}
+          {% include "post/partials/_post.html" with post=post %}
+        {% endfor %}
+      {% else %}
+        <div class="text-center py-16">
+          <i class="fas fa-camera text-5xl mb-4" style="color:var(--ig-border);"></i>
+          <p class="text-lg font-semibold">No posts yet</p>
+          <p class="text-sm mt-1" style="color:var(--ig-text-secondary);">
+            Follow people or <a href="{% url 'post:create' %}" style="color:var(--ig-blue);">share your first post</a>.
+          </p>
+        </div>
+      {% endif %}
     </div>
-    <div class="col-md-4">
-        <div class="sidebar_card">
-            <a href="{% url 'core:get_user' user_name=user.username %}"
-                class="deco-none card_top d-flex justify-content-between">
-                <div>
-                    <h5 class="card-title">{{user.first_name}}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{user.username}}</h6>
-                </div>
-                <img width="50" height="50" class="rounded-circle"
-                    src="/media/{% if user.avatar != None and user.avatar != '' %}{{user.avatar}}{% else %}profile/default.png{% endif %}"
-                    alt="">
+
+    <!-- Right sidebar -->
+    <aside class="hidden lg:flex flex-col w-[293px] flex-shrink-0 pt-2">
+
+      <!-- Current user -->
+      <div class="flex items-center justify-between mb-5">
+        <a href="{% url 'core:get_user' user_name=user.username %}" class="flex items-center gap-3">
+          <img class="w-14 h-14 rounded-full object-cover border border-ig-border"
+            src="/media/{% if user.avatar %}{{user.avatar}}{% else %}profile/default.png{% endif %}" alt="">
+          <div>
+            <p class="text-sm font-semibold" style="color:#262626;">{{ user.username }}</p>
+            <p class="text-sm" style="color:var(--ig-text-secondary);">{{ user.first_name }} {{ user.last_name }}</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Suggested users -->
+      {% if newUsers.count > 0 %}
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-sm font-semibold" style="color:var(--ig-text-secondary);">Suggested for you</span>
+        </div>
+        <div class="flex flex-col gap-3">
+          {% for u in newUsers %}
+          <div class="flex items-center justify-between">
+            <a href="{% url 'core:get_user' user_name=u.username %}" class="flex items-center gap-3">
+              <img class="w-8 h-8 rounded-full object-cover border border-ig-border"
+                src="/media/{% if u.avatar %}{{u.avatar}}{% else %}profile/default.png{% endif %}" alt="">
+              <div>
+                <p class="text-sm font-semibold leading-none mb-0.5" style="color:#262626;">{{ u.username }}</p>
+              </div>
             </a>
+            <a href="{% url 'core:get_user' user_name=u.username %}"
+              class="text-xs font-semibold" style="color:var(--ig-blue);">View</a>
+          </div>
+          {% endfor %}
         </div>
-        {% if newUsers.count > 0 %}
-        <div class="sidebar_card">
-            <h2 class="sidebar_title">Others</h2>
-            <div class="suggested_users__list mt-3">
-                {% for user in newUsers %}
-                <div class="suggested_user__card">
-                    <div class="d-flex align-items-center">
-                        <img width="32" height="32" class="suggested_user__img rounded-circle"
-                            src="/media/{% if user.avatar != None and user.avatar != '' %}{{user.avatar}}{% else %}profile/default.png{% endif %}"
-                            alt="">
-                        <span class="suggested_user__name">@{{user.username}}</span>
-                    </div>
-                    <a href="{%url 'core:get_user' user_name=user.username%}">See</a>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-        {% if tags.count > 0 %}
-        <div class="sidebar_card">
-            <h2 class="sidebar_title">Popular Tags</h2>
-            <ul class="home_tag__list mt-3">
-                {% for tag in tags %}
-                <li><a href="{% url 'tag:detail' tag_name=tag.name %}">{{tag.name}}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-    </div>
-</div>
+      </div>
+      {% endif %}
 
+      <!-- Popular tags -->
+      {% if tags.count > 0 %}
+      <div>
+        <p class="text-sm font-semibold mb-3" style="color:var(--ig-text-secondary);">Popular Tags</p>
+        <div class="flex flex-wrap gap-2">
+          {% for tag in tags %}
+          <a href="{% url 'tag:detail' tag_name=tag.name %}"
+            class="text-sm font-medium px-3 py-1 rounded-full border border-ig-border bg-white hover:bg-gray-50"
+            style="color:var(--ig-blue);">#{{ tag.name }}</a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+    </aside>
+  </div>
+</div>
 {% endblock %}

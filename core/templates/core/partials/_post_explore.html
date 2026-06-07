@@ -1,10 +1,11 @@
 {% load static %}
 
-
-<a href="{% url 'core:explore_by_post' post_permalink=post.hashed_permalink %}">
-    <div class="post_card card">
-        <div class="card_image">
-            <img src="/media/{{post.image}}" class="post_card__img card-img-top" alt="...">
-        </div>
+<a href="{% url 'core:explore_by_post' post_permalink=post.hashed_permalink %}" class="block w-full h-full">
+  <div class="ig-grid-item" style="aspect-ratio:1;">
+    <img src="/media/{{ post.image }}" alt="Post by {{ post.posted_user.username }}">
+    <div class="ig-grid-overlay">
+      <span><i class="fas fa-heart mr-1"></i>{{ post.total_like_count }}</span>
+      <span><i class="fas fa-comment mr-1"></i>{{ post.total_comment_count }}</span>
     </div>
+  </div>
 </a>

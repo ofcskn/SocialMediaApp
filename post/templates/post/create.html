@@ -1,28 +1,51 @@
 {% extends "base.html" %}
 {% load static %}
-{% block pageTitle %}Create a Post{% endblock %}
+{% block pageTitle %}Create Post{% endblock %}
 
 {% block content %}
-<h2>Share a Post</h2>
-<form action="{% url 'post:create' %}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <div class="form-group mb-2">
-        <label for="description" class="form-label">Description</label>
-        <textarea rows="4" class="form-control" id="description" name="description" aria-describedby="description"
-            required></textarea>
+<div class="max-w-[600px] mx-auto px-4 pt-8">
+
+  <div class="bg-white border border-ig-border rounded-sm overflow-hidden">
+    <!-- Header -->
+    <div class="flex items-center justify-center py-4 border-b border-ig-border">
+      <span class="text-base font-semibold">Create new post</span>
     </div>
-    <div class="input-group mb-2">
-        <input type="file" class="form-control" id="image" name="image" required
-            accept="image/png, image/jpg, image/jpeg">
-        <label class="input-group-text" for="image">Upload an Image</label>
+
+    <div class="p-6 md:p-8">
+      {% if error_message %}
+      <p class="mb-4 text-sm text-center" style="color:#ed4956;">{{ error_message }}</p>
+      {% endif %}
+
+      <form action="{% url 'post:create' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Upload area -->
+        <div class="mb-5">
+          <label class="block mb-1.5 text-sm font-semibold">Photo</label>
+          <label class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-ig-border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+            <div class="flex flex-col items-center justify-center" id="upload-placeholder">
+              <i class="fas fa-cloud-upload-alt text-4xl mb-3" style="color:var(--ig-text-secondary);"></i>
+              <p class="text-sm font-medium" style="color:var(--ig-text-secondary);">Click to upload a photo</p>
+              <p class="text-xs mt-1" style="color:var(--ig-text-secondary);">PNG, JPG, JPEG</p>
+            </div>
+            <span id="upload-filename" class="text-sm hidden" style="color:var(--ig-blue);"></span>
+            <input id="upload-input" type="file" class="hidden" name="image" required
+              accept="image/png,image/jpg,image/jpeg"
+              onchange="document.getElementById('upload-placeholder').classList.add('hidden'); document.getElementById('upload-filename').classList.remove('hidden'); document.getElementById('upload-filename').textContent = this.files[0].name;">
+          </label>
+        </div>
+
+        <!-- Caption -->
+        <div class="mb-5">
+          <label class="block mb-1.5 text-sm font-semibold">Caption</label>
+          <textarea rows="4" class="ig-input" style="font-size:14px;padding:10px 12px;resize:vertical;"
+            name="description" placeholder="Write a caption…" required></textarea>
+        </div>
+
+        <button type="submit" class="ig-btn-blue" style="font-size:15px;">Share</button>
+      </form>
     </div>
-    <input type="submit" class="btn btn-outline-success" value="Create">
-</form>
+  </div>
 
-
-{% if uploaded_file_url %}
-<p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
-{% endif %}
-
+</div>
 {% endblock %}

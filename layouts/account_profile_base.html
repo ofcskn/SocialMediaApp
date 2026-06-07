@@ -1,24 +1,52 @@
 {% extends "base.html" %}
 {% load static %}
-{% block pageTitle %}Edit Profile{% endblock %}
-
+{% block pageTitle %}Settings{% endblock %}
 
 {% block content %}
-<h1 class="mb-3">Edit</h2>
-    <div class="row">
-        <div class="col-md-6">
-            <ul class="list-group">
-                <li class="list-group-item"><a class="text-muted" href="{% url 'account:profile'%}">Edit Profile</a>
-                </li>
-                <li class="list-group-item"><a class="text-muted" href="{% url 'account:change_password'%}">Change
-                        Password</a></li>
-                <li class="list-group-item"><a class="text-muted" href="{% url 'account:following_requests'%}">Who want
-                        to follow me?</a></li>
-                <li class="list-group-item"><a class="text-muted" href="{% url 'account:logout'%}">Log out</a></li>
-            </ul>
-        </div>
-        <div class="col-md-6">
-            {% block content_sub %}{% endblock %}
-        </div>
+<div class="max-w-[935px] mx-auto md:px-4 pt-0 md:pt-8">
+
+  <!-- Mobile tab bar -->
+  <div class="md:hidden flex overflow-x-auto border-b border-ig-border bg-white text-sm">
+    <a href="{% url 'account:profile' %}"
+      class="px-5 py-3 whitespace-nowrap border-b-2 -mb-px {% if request.path == '/account/profile/' or request.path == '/account/profile' %}border-black font-semibold{% else %}border-transparent text-ig-secondary{% endif %}">
+      Edit Profile
+    </a>
+    <a href="{% url 'account:change_password' %}"
+      class="px-5 py-3 whitespace-nowrap border-b-2 -mb-px {% if 'change_password' in request.path %}border-black font-semibold{% else %}border-transparent text-ig-secondary{% endif %}">
+      Password
+    </a>
+    <a href="{% url 'account:following_requests' %}"
+      class="px-5 py-3 whitespace-nowrap border-b-2 -mb-px {% if 'following_requests' in request.path %}border-black font-semibold{% else %}border-transparent text-ig-secondary{% endif %}">
+      Requests
+    </a>
+  </div>
+
+  <!-- Desktop: card with left nav -->
+  <div class="flex bg-white md:border md:border-ig-border md:rounded-sm min-h-[500px]">
+
+    <aside class="hidden md:flex flex-col w-[236px] border-r border-ig-border py-4 flex-shrink-0">
+      <a href="{% url 'account:profile' %}"
+        class="settings-nav-link {% if request.path == '/account/profile/' or request.path == '/account/profile' %}active{% endif %}">
+        Edit Profile
+      </a>
+      <a href="{% url 'account:change_password' %}"
+        class="settings-nav-link {% if 'change_password' in request.path %}active{% endif %}">
+        Change Password
+      </a>
+      <a href="{% url 'account:following_requests' %}"
+        class="settings-nav-link {% if 'following_requests' in request.path %}active{% endif %}">
+        Follow Requests
+      </a>
+      <a href="{% url 'account:logout' %}" class="settings-nav-link mt-auto" style="color:#ed4956;">
+        Log Out
+      </a>
+    </aside>
+
+    <div class="flex-1 px-6 py-8 md:px-10">
+      {% block content_sub %}{% endblock %}
     </div>
-    {% endblock %}
+  </div>
+</div>
+{% endblock %}
+
+{% block my_scripts %}{% endblock %}

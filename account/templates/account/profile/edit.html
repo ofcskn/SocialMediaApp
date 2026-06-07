@@ -1,41 +1,43 @@
 {% extends "account_profile_base.html" %}
-{% block pageTitle %}Edit Profile{% endblock %}
 {% load static %}
-
+{% block pageTitle %}Edit Profile{% endblock %}
 
 {% block content_sub %}
+<h2 class="text-xl font-semibold mb-6">Edit Profile</h2>
 <form action="{% url 'account:profile' %}" method="post">
-    {% csrf_token %}
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <div class="form-group mb-2">
-        <label for="first_name" class="form-label">Name</label>
-        <input type="text" class="form-control" name="first_name" aria-describedby="first_name" value="{{data.first_name}}" required >
-    </div>
-    <div class="form-group mb-2">
-        <label for="last_name" class="form-label">Last Name</label>
-        <input type="text" class="form-control" name="last_name" aria-describedby="last_name" value="{{data.last_name}}" required >
-    </div>
-    <div class="form-group mb-2">
-        <label for="email" class="form-label">E-mail</label>
-        <input type="email" class="form-control" name="email" aria-describedby="email"  value="{{data.email}}" required >
-    </div>
-    <div class="form-group mb-2">
-        <label for="username" class="form-label">Username</label>
-        <input type="text" class="form-control" name="username" aria-describedby="username"  value="{{data.username}}" required >
-    </div>
-    <div class="form-group mb-2">
-        <label for="about_me" class="form-label">About me?</label>
-        <textarea rows="4" maxlength="2048" class="form-control" name="about_me" aria-describedby="about_me">{{data.about_me}}</textarea>
-    </div>
-    <div class="form-group mb-2">
-        <label for="website_url" class="form-label">Website Url</label>
-        <input type="text" class="form-control" name="website_url" aria-describedby="website_url"  value="{{data.website_url}}" maxlength="256" >
-    </div>
-    <input type="submit" class="btn btn-danger mt-2" value="Update">
+  {% csrf_token %}
+  {% if error_message %}
+  <p class="mb-4" style="font-size:13px;color:#ed4956;">{{ error_message }}</p>
+  {% endif %}
+
+  <div class="mb-4">
+    <label class="block text-sm font-semibold mb-1">First Name</label>
+    <input type="text" class="ig-input" name="first_name" value="{{ data.first_name }}" required>
+  </div>
+  <div class="mb-4">
+    <label class="block text-sm font-semibold mb-1">Last Name</label>
+    <input type="text" class="ig-input" name="last_name" value="{{ data.last_name }}" required>
+  </div>
+  <div class="mb-4">
+    <label class="block text-sm font-semibold mb-1">Email</label>
+    <input type="email" class="ig-input" name="email" value="{{ data.email }}" required>
+  </div>
+  <div class="mb-4">
+    <label class="block text-sm font-semibold mb-1">Username</label>
+    <input type="text" class="ig-input" name="username" value="{{ data.username }}" required>
+  </div>
+  <div class="mb-4">
+    <label class="block text-sm font-semibold mb-1">Bio</label>
+    <textarea rows="4" maxlength="2048" class="ig-input" name="about_me"
+      style="resize:vertical;">{{ data.about_me }}</textarea>
+  </div>
+  <div class="mb-6">
+    <label class="block text-sm font-semibold mb-1">Website</label>
+    <input type="text" class="ig-input" name="website_url" value="{{ data.website_url }}" maxlength="256">
+  </div>
+
+  <button type="submit" class="ig-btn-blue" style="width:auto;padding:7px 24px;">Submit</button>
 </form>
-
 {% endblock %}
 
-{% block my_scripts %}
-
-{% endblock %}
+{% block my_scripts %}{% endblock %}

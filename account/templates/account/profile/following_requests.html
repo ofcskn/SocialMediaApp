@@ -1,53 +1,51 @@
 {% extends "account_profile_base.html" %}
-{% block pageTitle %}Following Requests{% endblock %}
 {% load static %}
-
+{% block pageTitle %}Follow Requests{% endblock %}
 
 {% block content_sub %}
-<div>
-    <ol class="list-group list-group-numbered">
-        {% for req in data %}
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-            <div class="ms-2 me-auto">
-                <div class="fw-bold">@{{req.follower.username}}</div>
-                {{req.follower.first_name}} {{req.follower.last_name}}
-            </div>
-            
-            <button type="button" class="accept_request__btn btn btn-sm {% if req.is_accepted == True %} bg-success {% else %} bg-danger {%endif%} text-white"
-                data-url="{% url 'account:accept_following_request' id=req.pk %}">
-                {% if req.is_accepted == True %}
-                Accepted
-                {% else %}
-                Accept
-                {%endif%}
-            </button>
-        </li>
-        {% endfor%}
-    </ol>
+<h2 class="text-xl font-semibold mb-6">Follow Requests</h2>
+
+{% if data %}
+<div class="flex flex-col gap-2">
+  {% for req in data %}
+  <div class="flex items-center justify-between py-3 border-b border-ig-border">
+    <div class="flex items-center gap-3">
+      <img class="w-10 h-10 rounded-full object-cover border border-ig-border"
+        src="/media/{% if req.follower.avatar %}{{req.follower.avatar}}{% else %}profile/default.png{% endif %}" alt="">
+      <div>
+        <p class="text-sm font-semibold">@{{req.follower.username}}</p>
+        <p class="text-xs" style="color:var(--ig-text-secondary);">{{req.follower.first_name}} {{req.follower.last_name}}</p>
+      </div>
+    </div>
+    <button type="button"
+      class="accept_request__btn px-4 py-1.5 text-sm font-semibold rounded-lg text-white"
+      style="background: {% if req.is_accepted %}#22c55e{% else %}var(--ig-blue){% endif %};"
+      data-url="{% url 'account:accept_following_request' id=req.pk %}">
+      {% if req.is_accepted %}Accepted{% else %}Accept{% endif %}
+    </button>
+  </div>
+  {% endfor %}
 </div>
+{% else %}
+<p style="font-size:14px;color:var(--ig-text-secondary);">No pending follow requests.</p>
+{% endif %}
 {% endblock %}
 
 {% block my_scripts %}
 <script>
-    $(".accept_request__btn").click(function () {
-        var $button = $(this);
-        var form_url = $(this).data("url");
-        $.ajax({
-            url: form_url,
-            method: "POST",
-            data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
-            success: function (data) {
-                if (data=="True"){
-                    $button.removeClass("bg-danger").addClass("bg-success")
-                    $button.text("Accepted")
-                }
-                else if(data=="False"){
-                    $button.removeClass("bg-success").addClass("bg-danger")
-                    $button.text("Accept")
-                }
-            }
-        });
-
+  $(".accept_request__btn").click(function() {
+    var $btn = $(this);
+    $.ajax({
+      url: $btn.data("url"), method: "POST",
+      data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+      success: function(data) {
+        if (data === "True") {
+          $btn.css("background", "#22c55e").text("Accepted");
+        } else if (data === "False") {
+          $btn.css("background", "var(--ig-blue)").text("Accept");
+        }
+      }
     });
+  });
 </script>
 {% endblock %}

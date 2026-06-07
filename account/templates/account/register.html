@@ -1,36 +1,47 @@
 {% extends "account_base.html" %}
 {% load static %}
-{% block pageTitle %}Register{% endblock %}
+{% block pageTitle %}Sign Up{% endblock %}
 
 {% block content %}
-<h1 class="card-title">Register</h2>
-<form action="{% url 'account:register' %}" method="post">
+
+<!-- Card -->
+<div class="bg-white border border-ig-border px-10 pt-10 pb-8 mb-3">
+  <div class="text-center mb-6">
+    <span class="ig-logo" style="font-size:40px;">Socipoki</span>
+    <p class="mt-3 font-semibold text-center" style="color:var(--ig-text-secondary);font-size:16px;">
+      Sign up to see photos from your friends.
+    </p>
+  </div>
+
+  <form action="{% url 'account:register' %}" method="post">
     {% csrf_token %}
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <div class="form-group mb-2">
-        <label for="first_name" class="form-label">Name</label>
-        <input type="text" class="form-control" name="first_name" aria-describedby="first_name" required >
+    {% if error_message %}
+    <p class="text-center mb-3" style="font-size:13px;color:#ed4956;">{{ error_message }}</p>
+    {% endif %}
+
+    <div class="mb-2">
+      <input type="text" class="ig-input" name="first_name" placeholder="First Name" required>
     </div>
-    <div class="form-group mb-2">
-        <label for="last_name" class="form-label">Last Name</label>
-        <input type="text" class="form-control" name="last_name" aria-describedby="last_name" required >
+    <div class="mb-2">
+      <input type="text" class="ig-input" name="last_name" placeholder="Last Name" required>
     </div>
-    <div class="form-group mb-2">
-        <label for="email" class="form-label">E-mail</label>
-        <input type="email" class="form-control" name="email" aria-describedby="email" required >
+    <div class="mb-2">
+      <input type="email" class="ig-input" name="email" placeholder="Email address" required>
     </div>
-    <div class="form-group mb-2">
-        <label for="username" class="form-label">Username</label>
-        <input type="text" class="form-control" name="username" aria-describedby="username" required >
+    <div class="mb-2">
+      <input type="text" class="ig-input" name="username" placeholder="Username" required>
     </div>
-    <div class="form-group mb-2">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" name="password" aria-describedby="password" required >
+    <div class="mb-4">
+      <input type="password" class="ig-input" name="password" placeholder="Password" required>
     </div>
-    <div class="d-flex justify-content-start">
-        <span>Do you have an account? <a href="{% url 'account:login' %}">Sign In Now</a></span>
-    </div>
-    <input type="submit" class="btn btn-danger mt-2" value="Register">
-</form>
+    <button type="submit" class="ig-btn-blue">Sign Up</button>
+  </form>
+</div>
+
+<!-- Login link -->
+<div class="bg-white border border-ig-border py-4 text-center" style="font-size:14px;">
+  Have an account?
+  <a href="{% url 'account:login' %}" style="color:var(--ig-blue);font-weight:600;">Log in</a>
+</div>
 
 {% endblock %}

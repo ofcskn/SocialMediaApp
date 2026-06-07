@@ -1,261 +1,261 @@
 {% extends "base.html" %}
 {% load static %}
 {% load unicode_data %}
-{% block pageTitle %}{{user.username}} Profile{% endblock %}
-
+{% block pageTitle %}{{ profile_user.username }}{% endblock %}
 
 {% block content %}
-
 {% url 'core:get_user' user_name=profile_user.username as posts_url %}
 {% url 'core:saved_posts_of_user' user_name=profile_user.username as saved_posts_url %}
 {% url 'core:liked_posts_of_user' user_name=profile_user.username as liked_posts_url %}
-
 {% url 'core:get_followers_of_user' user_name=profile_user.username as followers_url %}
 {% url 'core:get_followings_of_user' user_name=profile_user.username as followings_url %}
 
-<section class="container">
-    <div class="row align-items-center">
-        <div class="col-md-4 profile_avatar">
-            {% if user.is_authenticated and profile_user == user %}
-            <div class="profile_avatar__overlay">
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                    data-bs-target="#profileAvatarUploadModal">
-                    <i class="fas fa-camera"></i>
-                </button>
-            </div>
-            {% endif %}
+<div class="max-w-[935px] mx-auto px-4">
 
-            {% if profile_user.avatar != "" %}
-            <img width="200" height="200" src="/media/{{profile_user.avatar}}" alt="{{profile_user.username}} Profile">
-            {% else %}
-            <img width="200" height="200" src="{% static 'img/default-profile.png' %}"
-                alt="{{profile_user.username}} Profile">
-            {%endif%}
-        </div>
-        <div class="col-md-8 profile_content">
-            <div class="profile_top d-flex justify-content-between">
-                <h1>@{{profile_user.username}}</h1>
-                <div class="profile_top__actions">
-                    {% if user.is_authenticated == True and user == profile_user %}
-                    <a href="{% url 'account:profile' %}">Edit Profile</a>
-                    {% else %}
-                    <button type="button" id="follow_to_user" class="btn btn-primary mr-2"
-                        data-url="{% url 'core:follow_user' to_user_name=profile_user.username %}">
-                        {%if userFollowingType == 'accepted' %}
-                        Following
-                        {%elif userFollowingType == 'not-following' %}
-                        Follow
-                        {%else%}
-                        Pending
-                        {%endif%}
-                    </button>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="profile_statistics mt-2">
-                <ul>
-                    <li><span>{{posts|length}}</span> Posts</li>
-                    <li><a href="{% url 'core:get_followings_of_user' user_name=profile_user.username %}"
-                            role="link"><span>{{followings_of.count}}</span> Following</a></li>
-                    <li><a href="{% url 'core:get_followers_of_user' user_name=profile_user.username %}"
-                            role="link"><span>{{followers_of.count}}</span> Followers</a></li>
-                </ul>
-            </div>
-            {% if profile_user.about_me != None and profile_user.about_me != "" %}
-            <p>{{profile_user.about_me}}</p>
-            {% endif %}
-            {% if profile_user.website_url != None and profile_user.website_url != "" %}
-            <a class="" href="{{profile_user.website_url}}" target="_blank">{{profile_user.website_url}}</a>
-            {% endif %}
-        </div>
-        <div class="col-md-12">
-            <ul class="nav nav-tabs profile_tabs" id="profile_tabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <a href="{% url 'core:get_user' user_name=profile_user.username %}"
-                        class="nav-link {% if request.path == posts_url|getStringFromUnicode %}active{% endif %}" id="home-tab" role="tab"
-                        aria-controls="home" aria-selected="true">Posts</a>
-                </li>
-                {% if user.is_authenticated and profile_user == user%}
-                <li class="nav-item" role="presentation">
-                    <a href="{% url 'core:saved_posts_of_user' user_name=profile_user.username %}"
-                        class="nav-link {% if request.path == saved_posts_url|getStringFromUnicode %}active{% endif %}" id="saved_posts-tab"
-                        role="tab" aria-controls="saved_posts" aria-selected="false">Saved</a>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <a href="{% url 'core:liked_posts_of_user' user_name=profile_user.username %}"
-                        class="nav-link {% if request.path == liked_posts_url|getStringFromUnicode %}active{% endif %}" id="liked_posts-tab"
-                        role="tab" aria-controls="liked_posts" aria-selected="false">Liked</a>
-                </li>
-                {% endif %}
-            </ul>
-            <div class="tab-content" id="profile_tabs_content">
-                <div class="tab-pane fade {% if request.path != liked_posts_url|getStringFromUnicode and request.path != saved_posts_url|getStringFromUnicode %}show active{% endif %}"
-                    id="home" role="tabpanel" aria-labelledby="home-tab">
-                    {% if posts|length > 0 %}
-                    <div class="grid">
-                        {% for post in posts %}
-                        <div class="grid-item col-md-4">
-                            {% include "core/partials/_post_profile.html" with post=post %}
-                        </div>
-                        {%endfor%}
-                    </div>
-                    {% else %}
-                    <p class="text-center">No posts from @{{profile_user.username}}</p>
-                    {% endif %}
-                </div>
-                <div class="tab-pane {% if request.path == saved_posts_url|getStringFromUnicode %}show active{% endif %}" id="saved_posts"
-                    role="tabpanel" aria-labelledby="saved_posts-tab">
-                    {% if postActions.saved|length > 0 %}
-                    <div class="tab_top__desc">
-                        <p>{{postActions.saved|length}} posts are saved</p>
-                    </div>
-                    <div class="grid">
-                        {% for postAction in postActions.saved %}
-                        <div class="grid-item col-md-4">
-                            {% include "core/partials/_post_profile.html" with post=postAction.post %}
-                        </div>
-                        {%endfor%}
-                    </div>
-                    {% else %}
-                    <p class="text-center">No posts have been saved yet.</p>
-                    {% endif %}
-                </div>
-                <div class="tab-pane {% if request.path == liked_posts_url|getStringFromUnicode %}show active{% endif %}" id="liked_posts"
-                    role="tabpanel" aria-labelledby="liked_posts-tab">
-                    {% if postActions.liked|length > 0 %}
-                    <div class="tab_top__desc">
-                        <p>{{postActions.liked|length}} posts are liked</p>
-                    </div>
-                    <div class="grid">
-                        {% for postAction in postActions.liked %}
-                        <div class="grid-item col-md-4">
-                            {% include "core/partials/_post_profile.html" with post=postAction.post %}
-                        </div>
-                        {%endfor%}
-                    </div>
-                    {% else %}
-                    <p class="text-center">No posts have been liked yet.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+  <!-- Profile header -->
+  <header class="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-14 py-8 md:py-10">
 
+    <!-- Avatar -->
+    <div class="profile_avatar flex-shrink-0">
+      <img class="w-20 h-20 md:w-36 md:h-36 rounded-full object-cover border border-ig-border"
+        src="/media/{% if profile_user.avatar %}{{ profile_user.avatar }}{% else %}profile/default.png{% endif %}"
+        alt="{{ profile_user.username }}">
+      {% if user.is_authenticated and profile_user == user %}
+      <div class="profile_avatar__overlay">
+        <button type="button"
+          data-bs-toggle="modal" data-bs-target="#profileAvatarUploadModal"
+          class="w-7 h-7 rounded-full flex items-center justify-center"
+          style="background:var(--ig-blue);border:none;cursor:pointer;">
+          <i class="fas fa-camera text-white" style="font-size:11px;"></i>
+        </button>
+      </div>
+      {% endif %}
     </div>
-</section>
 
+    <!-- Info -->
+    <div class="flex-1 text-center md:text-left">
+      <div class="flex flex-col md:flex-row items-center md:items-center gap-4 mb-4">
+        <h1 class="text-xl font-light">{{ profile_user.username }}</h1>
+        {% if user.is_authenticated and user == profile_user %}
+        <a href="{% url 'account:profile' %}"
+          class="px-4 py-1.5 text-sm font-semibold rounded-lg border border-ig-border hover:bg-gray-50"
+          style="color:#262626;">Edit profile</a>
+        {% elif user.is_authenticated %}
+        <button id="follow_to_user" type="button"
+          data-url="{% url 'core:follow_user' to_user_name=profile_user.username %}"
+          class="px-6 py-1.5 text-sm font-semibold rounded-lg"
+          style="{% if userFollowingType == 'accepted' %}border:1px solid var(--ig-border);background:white;color:#262626;{% else %}background:var(--ig-blue);color:white;border:none;{% endif %}cursor:pointer;">
+          {% if userFollowingType == 'accepted' %}Following
+          {% elif userFollowingType == 'not-following' %}Follow
+          {% else %}Pending{% endif %}
+        </button>
+        {% endif %}
+      </div>
+
+      <!-- Stats -->
+      <div class="flex justify-center md:justify-start gap-6 md:gap-8 mb-4 text-sm">
+        <span><strong>{{ posts|length }}</strong> posts</span>
+        <a href="{{ followers_url }}" style="color:#262626;">
+          <strong>{{ followers_of.count }}</strong> followers
+        </a>
+        <a href="{{ followings_url }}" style="color:#262626;">
+          <strong>{{ followings_of.count }}</strong> following
+        </a>
+      </div>
+
+      <!-- Bio -->
+      {% if profile_user.first_name or profile_user.last_name %}
+      <p class="text-sm font-semibold">{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+      {% endif %}
+      {% if profile_user.about_me %}
+      <p class="text-sm mt-1">{{ profile_user.about_me }}</p>
+      {% endif %}
+      {% if profile_user.website_url %}
+      <a href="{{ profile_user.website_url }}" target="_blank"
+        class="text-sm font-semibold" style="color:var(--ig-blue);">{{ profile_user.website_url }}</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Tab bar -->
+  <div class="border-t border-ig-border flex justify-center">
+    <a href="{{ posts_url }}"
+      class="flex items-center gap-1.5 px-5 py-3 text-xs font-semibold tracking-widest uppercase border-t-2 -mt-px"
+      style="{% if request.path == posts_url|getStringFromUnicode %}border-color:#262626;color:#262626;{% else %}border-color:transparent;color:var(--ig-text-secondary);{% endif %}">
+      <i class="fas fa-th" style="font-size:14px;"></i>
+      <span class="hidden md:inline">POSTS</span>
+    </a>
+    {% if user.is_authenticated and profile_user == user %}
+    <a href="{{ saved_posts_url }}"
+      class="flex items-center gap-1.5 px-5 py-3 text-xs font-semibold tracking-widest uppercase border-t-2 -mt-px"
+      style="{% if request.path == saved_posts_url|getStringFromUnicode %}border-color:#262626;color:#262626;{% else %}border-color:transparent;color:var(--ig-text-secondary);{% endif %}">
+      <i class="fas fa-bookmark" style="font-size:14px;"></i>
+      <span class="hidden md:inline">SAVED</span>
+    </a>
+    <a href="{{ liked_posts_url }}"
+      class="flex items-center gap-1.5 px-5 py-3 text-xs font-semibold tracking-widest uppercase border-t-2 -mt-px"
+      style="{% if request.path == liked_posts_url|getStringFromUnicode %}border-color:#262626;color:#262626;{% else %}border-color:transparent;color:var(--ig-text-secondary);{% endif %}">
+      <i class="fas fa-heart" style="font-size:14px;"></i>
+      <span class="hidden md:inline">LIKED</span>
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- Posts grid -->
+  <div class="pt-1">
+
+    {% if request.path == posts_url|getStringFromUnicode or request.path == '/@'|add:profile_user.username|add:'/' %}
+      {% if posts|length > 0 %}
+      <div class="ig-grid">
+        {% for post in posts %}
+        <div class="ig-grid-item">
+          {% include "core/partials/_post_profile.html" with post=post %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-12">
+        <i class="fas fa-camera text-5xl mb-4" style="color:var(--ig-border);"></i>
+        <p class="font-semibold">No posts yet</p>
+      </div>
+      {% endif %}
+
+    {% elif request.path == saved_posts_url|getStringFromUnicode %}
+      {% if postActions.saved|length > 0 %}
+      <div class="ig-grid">
+        {% for postAction in postActions.saved %}
+        <div class="ig-grid-item">
+          {% include "core/partials/_post_profile.html" with post=postAction.post %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-12">
+        <i class="fas fa-bookmark text-5xl mb-4" style="color:var(--ig-border);"></i>
+        <p class="font-semibold">No saved posts yet.</p>
+      </div>
+      {% endif %}
+
+    {% elif request.path == liked_posts_url|getStringFromUnicode %}
+      {% if postActions.liked|length > 0 %}
+      <div class="ig-grid">
+        {% for postAction in postActions.liked %}
+        <div class="ig-grid-item">
+          {% include "core/partials/_post_profile.html" with post=postAction.post %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-12">
+        <i class="fas fa-heart text-5xl mb-4" style="color:var(--ig-border);"></i>
+        <p class="font-semibold">No liked posts yet.</p>
+      </div>
+      {% endif %}
+
+    {% else %}
+      {% if posts|length > 0 %}
+      <div class="ig-grid">
+        {% for post in posts %}
+        <div class="ig-grid-item">
+          {% include "core/partials/_post_profile.html" with post=post %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-12">
+        <i class="fas fa-camera text-5xl mb-4" style="color:var(--ig-border);"></i>
+        <p class="font-semibold">No posts yet</p>
+      </div>
+      {% endif %}
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- Followers / Following modal -->
 {% if request.path == followers_url|getStringFromUnicode or request.path == followings_url|getStringFromUnicode %}
-<!-- Followers Modal -->
-<div class="modal fade" id="followersModal" data-backurl="{{posts_url|getStringFromUnicode}}" tabindex="-1" aria-labelledby="followersModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="followersModalLabel">Followers</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                {% for follower in followers_of.list %}
-                <p>{{follower.username}}</p>
-                {% endfor %}
-                {% if followers_of.list|length > 0 %}
-                <!--Followers list-->
-                {% for item in followers_of.list %}
-                {% include "core/partials/_user_card.html" with user=item.follower %}
-                {% endfor %}
-                {% elif followings_of.list|length > 0%}
-                <!-- Following list-->
-                {% for item in followings_of.list %}
-                {% include "core/partials/_user_card.html" with user=item.to %}
-                {% endfor %}
-                {% else %}
-                <p>No users.</p>
-                {% endif %}
-            </div>
-        </div>
+<div class="modal fade" id="followersModal"
+  data-backurl="{{ posts_url|getStringFromUnicode }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>{% if request.path == followers_url|getStringFromUnicode %}Followers{% else %}Following{% endif %}</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% if followers_of.list|length > 0 %}
+          {% for item in followers_of.list %}
+          <div class="px-4 py-2 border-b border-ig-border last:border-0">
+            {% include "core/partials/_user_card.html" with user=item.follower %}
+          </div>
+          {% endfor %}
+        {% elif followings_of.list|length > 0 %}
+          {% for item in followings_of.list %}
+          <div class="px-4 py-2 border-b border-ig-border last:border-0">
+            {% include "core/partials/_user_card.html" with user=item.to %}
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-center py-6 text-sm" style="color:var(--ig-text-secondary);">No users yet.</p>
+        {% endif %}
+      </div>
     </div>
+  </div>
 </div>
 {% endif %}
+
 {% endblock %}
 
-
 {% block my_modals %}
-<!-- Profile Upload Avatar Modal -->
-<div class="modal fade" id="profileAvatarUploadModal" tabindex="-1" aria-labelledby="profileAvatarUploadModalLabel"
-    aria-hidden="true">
-    <form action="{% url 'account:upload_avatar' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="profileAvatarUploadModalLabel">Uplod an Avatar</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="avatar">Avatar</label>
-                        <input type="file" class="form-control" name="avatar" accept="img/jpeg, img/jpg, img/png">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">Upload</button>
-                </div>
-            </div>
+<!-- Avatar upload modal -->
+<div class="modal fade" id="profileAvatarUploadModal" tabindex="-1" aria-hidden="true">
+  <form action="{% url 'account:upload_avatar' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span>Change Profile Photo</span>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-    </form>
+        <div class="modal-body px-6 py-4">
+          <input type="file" class="ig-input" name="avatar" accept="image/jpeg,image/jpg,image/png">
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-bs-dismiss="modal"
+            style="background:transparent;border:1px solid var(--ig-border);border-radius:8px;padding:6px 16px;font-size:14px;cursor:pointer;">
+            Cancel
+          </button>
+          <button type="submit"
+            style="background:var(--ig-blue);color:white;border:none;border-radius:8px;padding:6px 16px;font-size:14px;font-weight:600;cursor:pointer;">
+            Upload
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 {% endblock %}
 
 {% block my_scripts %}
-<script src="{% static '/lib/masonry/masonry.pkgd.min.js' %}"></script>
 <script>
-    // Modals
-    var followersModal = $('#followersModal');
-
-    // Masonry
-    var masonryGrid = $('.grid').masonry({
-        // set itemSelector so .grid-sizer is not used in layout
-        itemSelector: '.grid-item',
-        // use element for option
-        percentPosition: true,
-        horizontalOrder: true
-    })
-
-    // When modals hidded
-    followersModal.on('hidden.bs.modal', function () {
-        let url = $(this).data("backurl");
-        history.pushState(null, "", url); 
-    })
-
-    $(document).ready(function () {
-        // show modal 
-        followersModal.modal('show');
-
-        // Masonry
-        masonryGrid.masonry('layout');
+  var followersModal = $('#followersModal');
+  if (followersModal.length) {
+    followersModal.on('hidden.bs.modal', function() {
+      history.pushState(null, "", $(this).data("backurl"));
     });
+    $(document).ready(function() { followersModal.modal('show'); });
+  }
 
-    $("#follow_to_user").click(function () {
-        var $button = $(this);
-        var form_url = $(this).data("url");
-        $.ajax({
-            url: form_url,
-            method: "POST",
-            data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
-            success: function (data) {
-                if (data == "sent") {
-                    $button.text("Pending")
-                }
-                else if (data == "canceled") {
-                    $button.text("Follow")
-                }
-                else {
-                    alert("There is an error. Sorry for that.")
-                }
-            }
-        });
-
+  $("#follow_to_user").click(function() {
+    var $btn = $(this);
+    $.ajax({
+      url: $btn.data("url"), method: "POST",
+      data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+      success: function(data) {
+        if (data === "sent")     $btn.text("Pending");
+        else if (data === "canceled") $btn.text("Follow");
+      }
     });
+  });
 </script>
 {% endblock %}

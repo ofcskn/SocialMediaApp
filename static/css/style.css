@@ -1,253 +1,160 @@
-.app_content {
-    min-height: 100vh;
+:root {
+  --ig-bg: #fafafa;
+  --ig-white: #ffffff;
+  --ig-black: #262626;
+  --ig-text-secondary: #8e8e8e;
+  --ig-border: #dbdbdb;
+  --ig-blue: #0095f6;
+  --ig-red: #ed4956;
+  --ig-gradient: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  --ig-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.card_image {
-    position: relative;
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--ig-bg);
+  font-family: var(--ig-font);
+  margin: 0;
+  color: var(--ig-black);
 }
 
-.card_overlay {
-    position: absolute;
-    top: 10px;
-    left: 10px;
+a { text-decoration: none; }
+
+/* ── Logo ── */
+.ig-logo {
+  font-size: 26px;
+  font-weight: 700;
+  background: var(--ig-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  font-style: italic;
 }
 
-.card_image__avatar {
-    border-radius: 50%;
-    margin-right: 4px;
-    width: 32px;
-    height: 32px;
+/* ── Sidebar nav ── */
+.nav-link-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--ig-black);
+  font-size: 15px;
+  transition: background 0.15s;
 }
+.nav-link-item:hover { background: #f0f0f0; color: var(--ig-black); }
+.nav-link-item.active { font-weight: 700; }
+.nav-link-item i { font-size: 22px; width: 24px; text-align: center; flex-shrink: 0; }
 
-.card_image__avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+/* ── Instagram-style inputs ── */
+.ig-input {
+  width: 100%;
+  background: var(--ig-bg);
+  border: 1px solid var(--ig-border);
+  border-radius: 3px;
+  padding: 9px 8px;
+  font-size: 12px;
+  color: var(--ig-black);
+  outline: none;
+  font-family: var(--ig-font);
 }
+.ig-input:focus { border-color: #a8a8a8; }
+.ig-input::placeholder { color: var(--ig-text-secondary); }
 
-.card_image__profile {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    border-radius: 10px;
-    background-color: #fff;
-    color: #000;
-    text-decoration: none;
+.ig-btn-blue {
+  width: 100%;
+  background: var(--ig-blue);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--ig-font);
 }
+.ig-btn-blue:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.card_description {
-    font-size: 20px;
-    color: rgb(46, 46, 46);
-}
-
-.profile_avatar {
-    padding: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.profile_avatar img {
-    object-fit: cover;
-    border-radius: 50%;
-
-}
-
-.profile_statistics {
-    margin: 0px 0 0px 0px;
-}
-
-.profile_statistics ul {
-    display: flex;
-    list-style: none;
-    justify-content: space-between;
-    padding: 0;
-}
-
-.profile_statistics ul li {
-    margin-right: 10px;
-}
-
-.profile_statistics ul li a {
-    text-decoration: none;
-    color: #000;
-}
-
-.profile_statistics ul li span,
-.profile_statistics ul li a span {
-    font-weight: bold;
-}
-
-.profile_posts {
-    display: flex;
-    justify-content: center;
-}
-
+/* ── Post action buttons (AJAX selectors preserved) ── */
 .post_action__btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.post_action__btn i { font-size: 22px; color: var(--ig-black); }
+.post_action__btn.like.acted i { color: var(--ig-red); }
+.post_action__btn.save.acted i { color: var(--ig-black); }
+.post_action__button { display: flex; align-items: center; }
+.post_action__num { font-size: 14px; font-weight: 500; }
 
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    text-decoration: none;
+/* ── Explore / profile grid ── */
+.ig-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
 }
+.ig-grid-item {
+  aspect-ratio: 1;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+.ig-grid-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ig-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s;
+  color: white;
+  font-weight: 600;
+  gap: 20px;
+  font-size: 14px;
+}
+.ig-grid-item:hover .ig-grid-overlay { opacity: 1; }
 
-.post_action__btn i {
-    font-size: 24px;
-    color: rgb(160, 160, 160);
-}
+/* ── Profile avatar ── */
+.profile_avatar { position: relative; display: inline-block; }
+.profile_avatar__overlay { position: absolute; bottom: 8px; right: 8px; }
 
-.post_action__btn.like.acted i {
-    color: rgb(168, 0, 0);
-}
+/* ── Bootstrap modal (no Bootstrap CSS needed) ── */
+.modal { display: none; position: fixed; inset: 0; z-index: 1055; background: rgba(0,0,0,0.65); overflow: auto; }
+.modal.show { display: flex; align-items: center; justify-content: center; }
+.modal-dialog { position: relative; width: 100%; max-width: 420px; margin: 1rem auto; pointer-events: none; }
+.modal-content { background: var(--ig-white); border-radius: 12px; pointer-events: all; overflow: hidden; }
+.modal-header { display: flex; align-items: center; justify-content: center; padding: 14px 16px; border-bottom: 1px solid var(--ig-border); font-weight: 600; font-size: 15px; position: relative; }
+.modal-body { padding: 8px 0; max-height: 60vh; overflow-y: auto; }
+.modal-footer { padding: 12px 16px; border-top: 1px solid var(--ig-border); display: flex; justify-content: flex-end; gap: 8px; }
+.btn-close { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 22px; line-height: 1; color: var(--ig-black); }
+.btn-close::after { content: '×'; }
 
-.post_action__btn.save.acted i {
-    color: rgb(46, 46, 46);
-}
+/* ── Bootstrap dropdown (no Bootstrap CSS needed) ── */
+.dropdown { position: relative; display: inline-block; }
+.dropdown-toggle { background: transparent; border: none; cursor: pointer; padding: 4px 8px; }
+.dropdown-menu { position: absolute; right: 0; top: 100%; background: white; border: 1px solid var(--ig-border); border-radius: 8px; min-width: 130px; display: none; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.12); padding: 4px 0; }
+.dropdown-menu.show { display: block; }
+.dropdown-item { display: block; padding: 8px 16px; cursor: pointer; background: transparent; border: none; width: 100%; text-align: left; font-size: 14px; color: var(--ig-black); }
+.dropdown-item:hover { background: #f5f5f5; }
 
-.profile_avatar {
-    position: relative;
-}
+/* ── Comments ── */
+.comments_of_post { list-style: none; padding: 0; margin: 0; }
+.editable_comment__input { border: 1px solid var(--ig-border); border-radius: 4px; padding: 4px 8px; font-size: 13px; width: 100%; outline: none; font-family: var(--ig-font); }
 
-.profile_avatar__overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+/* ── Post detail side-by-side ── */
+.post-detail-image { background: #000; display: flex; align-items: center; justify-content: center; }
+.post-detail-image img { max-height: 600px; width: 100%; object-fit: contain; }
 
-.profile_avatar__overlay button {
-    border: none;
-    background: #000;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.profile_avatar__overlay button i {
-    color: #fff;
-    font-size: 16px;
-}
-
-a.deco-none {
-    color: #000000 !important;
-    text-decoration: none;
-}
-
-.home_tag__list {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    justify-content: start;
-    flex-wrap: wrap;
-    margin-bottom: 0;
-}
-
-.home_tag__list li {
-    border: 1px solid rgb(223, 223, 223);
-    margin-right: 5px;
-    padding: 2px 8px;
-    background-color: rgb(249 249 249);
-    border-radius: 8px;
-    margin-bottom: 5px;
-}
-
-.home_tag__list li a {
-    color: rgb(61, 61, 61);
-    font-size: 20px;
-    font-weight: 500;
-    text-decoration: none;
-}
-
-.suggested_users__list {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-}
-
-.suggested_user__card {
-    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.suggested_user__name {
-    font-size: 18px;
-    font-weight: 600;
-    margin-left: 5px;
-}
-
-.sidebar_card {
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-    padding: 20px 16px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-}
-
-.sidebar_title {
-    font-size: 24px;
-}
-
-.sidebar_title::after {
-    display: block;
-    content: '';
-    height: 1px;
-    width: 20%;
-    background-color: rgb(138, 138, 138);
-    margin-top: 6px;
-}
-
-#profile_tabs {
-    display: flex;
-    justify-content: center;
-}
-
-#profile_tabs_content {
-    padding: 10px 0;
-}
-
-.post_action__button {
-    display: flex;
-}
-
-.post_action__num {
-    font-size: 24px;
-    font-weight: 400;
-    margin-left: 6px;
-}
-
-.grid-item {
-    padding: 8px;
-}
-
-.grid-item .card {
-    overflow: hidden;
-    border-radius: 10px;
-}
-
-.comments_of_post .list-group-item {
-    border: none;
-}
-.comments_of_post{
-    border:1px solid rgb(230, 230, 230);
-    border-top: none;
-    border-radius: 0 0 5px 5px;
-}
-
-.comments_section_of_post .input-group,
-.comments_section_of_post input,
-.comments_section_of_post span
-{
-    border-radius: 5px 5px 0 0;
-}
+/* ── Settings sidebar border ── */
+.settings-nav-link { display: block; padding: 10px 24px; font-size: 14px; color: var(--ig-black); border-left: 2px solid transparent; transition: background 0.1s; }
+.settings-nav-link:hover { background: #fafafa; color: var(--ig-black); }
+.settings-nav-link.active { font-weight: 700; border-left-color: var(--ig-black); }

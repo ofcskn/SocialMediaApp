@@ -1,36 +1,27 @@
 {% extends "base.html" %}
 {% load static %}
-{% block pageTitle %}{{ title }}{% endblock %}
+{% block pageTitle %}Explore{% endblock %}
+
 {% block content %}
+<div class="max-w-[935px] mx-auto px-0 md:px-4 pt-4">
 
-{% if posts|length > 0 %}
-<div class="grid">
+  {% if posts|length > 0 %}
+  <div class="ig-grid">
     {% for post in posts %}
-    <div class="grid-item col-md-4">
-        {% include "core/partials/_post_explore.html" with post=post %}
+    <div class="ig-grid-item">
+      {% include "core/partials/_post_explore.html" with post=post %}
     </div>
-    {%endfor%}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-16">
+    <i class="fas fa-compass text-5xl mb-4" style="color:var(--ig-border);"></i>
+    <p class="font-semibold">Nothing to explore yet.</p>
+    <p class="text-sm mt-1" style="color:var(--ig-text-secondary);">
+      <a href="{% url 'post:create' %}" style="color:var(--ig-blue);">Share a post</a> to get started.
+    </p>
+  </div>
+  {% endif %}
+
 </div>
-{% else %}
-<p>No posts</p>
-{% endif %}
-
-{% endblock %}
-
-{% block my_scripts %}
-<script src="{% static '/lib/masonry/masonry.pkgd.min.js' %}"></script>
-<script>
-    // Masonry
-    var masonryGrid = $('.grid').masonry({
-        // set itemSelector so .grid-sizer is not used in layout
-        itemSelector: '.grid-item',
-        // use element for option
-        percentPosition: true,
-        horizontalOrder: true
-    })
-    $(document).ready(function () {
-        // Masonry
-        masonryGrid.masonry('layout');
-    });
-</script>
 {% endblock %}

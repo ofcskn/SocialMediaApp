@@ -1,10 +1,11 @@
 {% load static %}
 
-
-<a href="{% url 'post:detail' permalink=post.hashed_permalink %}">
-    <div class="card">
-        <div class="card_image">
-            <img src="/media/{{post.image}}" class="card-img-top profile_post__card_img" alt="...">
-        </div>
+<a href="{% url 'post:detail' permalink=post.hashed_permalink %}" class="block w-full h-full">
+  <div class="ig-grid-item" style="aspect-ratio:1;">
+    <img src="/media/{{ post.image }}" alt="Post">
+    <div class="ig-grid-overlay">
+      <span><i class="fas fa-heart mr-1"></i>{{ post.total_like_count }}</span>
+      <span><i class="fas fa-comment mr-1"></i>{{ post.total_comment_count }}</span>
     </div>
+  </div>
 </a>

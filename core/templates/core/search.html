@@ -1,46 +1,85 @@
 {% extends "base.html" %}
 {% load static %}
-{% block pageTitle %}{{ title }}{% endblock %}
-{% block content %}
+{% block pageTitle %}Search{% endblock %}
 
-{% if posts|length > 0 %}
-<div class="row">
-    {% for post in posts %}
-    <div class="col-md-4 mb-4">
+{% block content %}
+<div class="max-w-[935px] mx-auto px-4 pt-6">
+
+  <!-- Search bar -->
+  <form method="get" action="{% url 'core:search' %}" class="mb-8">
+    <div class="flex gap-2 max-w-[470px]">
+      <input name="q" type="search" value="{{ request.GET.q }}"
+        class="ig-input flex-1" style="font-size:14px;padding:10px 12px;"
+        placeholder="Search for people, posts, tags…" autofocus>
+      <button type="submit"
+        class="ig-btn-blue" style="width:auto;padding:10px 20px;font-size:14px;">Search</button>
+    </div>
+  </form>
+
+  {% if request.GET.q %}
+
+  <!-- Posts results -->
+  {% if posts|length > 0 %}
+  <section class="mb-8">
+    <h2 class="text-sm font-semibold mb-3" style="color:var(--ig-text-secondary);">POSTS</h2>
+    <div class="ig-grid">
+      {% for post in posts %}
+      <div class="ig-grid-item">
         {% include "core/partials/_post_explore.html" with post=post %}
+      </div>
+      {% endfor %}
     </div>
-    {%endfor%}
-</div>
-{% else %}
-<p>No posts</p>
-{% endif %}
-<hr>
-{% if users|length > 0 %}
-<div class="suggested_users__list mt-3">
-    {% for user in users %}
-    <div class="suggested_user__card">
-        <div class="d-flex align-items-center">
-            <img width="32" height="32" class="suggested_user__img"
-                src="/media/{% if profile_user.avatar != None and profile_user.avatar != '' %}{{user.avatar}}{% else %}profile/default.png{% endif %}"
-                alt="">
-            <span class="suggested_user__name">@{{user.username}}</span>
+  </section>
+  {% endif %}
+
+  <!-- People results -->
+  {% if users|length > 0 %}
+  <section class="mb-8">
+    <h2 class="text-sm font-semibold mb-3" style="color:var(--ig-text-secondary);">PEOPLE</h2>
+    <div class="flex flex-col gap-1 max-w-[470px]">
+      {% for u in users %}
+      <a href="{% url 'core:get_user' user_name=u.username %}"
+        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white">
+        <img class="w-11 h-11 rounded-full object-cover border border-ig-border"
+          src="/media/{% if u.avatar %}{{u.avatar}}{% else %}profile/default.png{% endif %}" alt="">
+        <div>
+          <p class="text-sm font-semibold" style="color:#262626;">{{ u.username }}</p>
+          <p class="text-xs" style="color:var(--ig-text-secondary);">{{ u.first_name }} {{ u.last_name }}</p>
         </div>
-        <a href="{%url 'core:get_user' user_name=user.username%}">See</a>
+      </a>
+      {% endfor %}
     </div>
-    {% endfor %}
+  </section>
+  {% endif %}
+
+  <!-- Tags results -->
+  {% if tags|length > 0 %}
+  <section class="mb-8">
+    <h2 class="text-sm font-semibold mb-3" style="color:var(--ig-text-secondary);">TAGS</h2>
+    <div class="flex flex-wrap gap-2">
+      {% for tag in tags %}
+      <a href="{% url 'tag:detail' tag_name=tag.name %}"
+        class="text-sm font-medium px-4 py-2 rounded-full border border-ig-border bg-white hover:bg-gray-50"
+        style="color:var(--ig-blue);">#{{ tag.name }}</a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if not posts and not users and not tags %}
+  <div class="text-center py-12">
+    <i class="fas fa-search text-4xl mb-3" style="color:var(--ig-border);"></i>
+    <p class="font-semibold">No results for "{{ request.GET.q }}"</p>
+    <p class="text-sm mt-1" style="color:var(--ig-text-secondary);">Try a different search term.</p>
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="text-center py-16">
+    <i class="fas fa-search text-5xl mb-4" style="color:var(--ig-border);"></i>
+    <p class="font-semibold">Search for people, tags, and posts</p>
+  </div>
+  {% endif %}
+
 </div>
-{% else %}
-<p>No users</p>
-{% endif %}
-<hr>
-{% if tags|length > 0 %}
-<ul class="home_tag__list mt-3">
-    {% for tag in tags %}
-    <li><a href="{% url 'tag:detail' tag_name=tag.name %}">{{tag.name}}</a></li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No tags</p>
-{% endif %}
-<hr>
 {% endblock %}

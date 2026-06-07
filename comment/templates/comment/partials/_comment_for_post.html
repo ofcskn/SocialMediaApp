@@ -1,43 +1,60 @@
 {% load static %}
 {% load post_comments %}
 
-<li class="post_comment__list__item_with_sub list-group-item pt-3">
-    <div class="d-flex post_comment__list__item align-items-center justify-content-between">
-        <div class="d-flex align-items-center">
-            <a href="{% url 'core:get_user' user_name=comment.who_sent.username %}">
-                <img width="40" height="40" class="rounded-circle me-3"
-                    src="/media/{% if comment.who_sent.avatar != None and comment.who_sent.avatar != '' %}{{comment.who_sent.avatar}}{% else %}profile/default.png{% endif %}">
-            </a>
-            <div class="comment_content ms-2">
-                <h6 class="mb-1">{{comment.who_sent.username}}</h6>
-                <div class="post_comment__text">
-                    <span>{{comment.content}}</span>
-                </div>
-            </div>
-        </div>
-        <div class="d-flex align-items-center">
-            <button class="reply_button btn btn-sm reply_comment__btn" data-url="{% url 'comment:reply' id=comment.pk %}"
-                type="button">
-                <i class="fa fa-reply"></i>
-            </button>
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-pen"></i>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><button type="button" class="dropdown-item post_comment__edit_btn"
-                            data-url="{% url 'comment:edit' id=comment.pk %}">Edit</button></li>
-                    <li><button type="button" class="dropdown-item post_comment__delete_btn"
-                            data-url="{% url 'comment:delete' id=comment.pk %}">Delete</button></li>
-                </ul>
-            </div>
-        </div>
+<li class="post_comment__list__item_with_sub py-1.5">
+  <div class="post_comment__list__item flex items-start justify-between gap-2">
+
+    <div class="flex items-start gap-2 flex-1 min-w-0">
+      <a href="{% url 'core:get_user' user_name=comment.who_sent.username %}" class="flex-shrink-0">
+        <img class="w-7 h-7 rounded-full object-cover border border-ig-border"
+          src="/media/{% if comment.who_sent.avatar %}{{comment.who_sent.avatar}}{% else %}profile/default.png{% endif %}"
+          alt="{{ comment.who_sent.username }}">
+      </a>
+      <div class="comment_content flex-1 min-w-0">
+        <p class="text-sm m-0">
+          <a href="{% url 'core:get_user' user_name=comment.who_sent.username %}"
+            class="font-semibold mr-1" style="color:#262626;">{{ comment.who_sent.username }}</a>
+          <span class="post_comment__text" style="display:inline;">
+            <span>{{ comment.content }}</span>
+          </span>
+        </p>
+      </div>
     </div>
-    <ul class="ps-5 sub_comments_of_post">
-        {% if comment|getLatestSubCommentsOfPost:2|length > 0 %}
-        {% for comment in comment|getLatestSubCommentsOfPost:2 %}
+
+    <div class="flex items-center gap-1 flex-shrink-0">
+      <button class="reply_comment__btn" type="button"
+        style="background:transparent;border:none;cursor:pointer;padding:4px;"
+        data-url="{% url 'comment:reply' id=comment.pk %}">
+        <i class="fa fa-reply text-xs" style="color:var(--ig-text-secondary);"></i>
+      </button>
+      <div class="dropdown">
+        <button type="button" class="dropdown-toggle"
+          style="color:var(--ig-text-secondary);font-size:12px;"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-ellipsis-h"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <button type="button" class="dropdown-item post_comment__edit_btn"
+              data-url="{% url 'comment:edit' id=comment.pk %}">Edit</button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item post_comment__delete_btn"
+              style="color:#ed4956;"
+              data-url="{% url 'comment:delete' id=comment.pk %}">Delete</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sub-comments (replies) -->
+  <ul class="sub_comments_of_post pl-9 list-none m-0 p-0">
+    {% if comment|getLatestSubCommentsOfPost:2|length > 0 %}
+      {% for comment in comment|getLatestSubCommentsOfPost:2 %}
         {% include 'comment/partials/_comment_for_post.html' with comment=comment %}
-        {% endfor %}
-        {% endif %}
-    </ul>
+      {% endfor %}
+    {% endif %}
+  </ul>
 </li>
