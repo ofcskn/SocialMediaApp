@@ -2,6 +2,9 @@ from pathlib import Path
 import os
 import dj_database_url
 import django_heroku
+from dotenv import load_dotenv
+
+load_dotenv(BASE_DIR / '.env') if False else load_dotenv(Path(__file__).resolve().parent.parent / '.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,14 +14,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-qc9-^%#axeb4c-7f2zv2r4n@p(6tu+fr(16f5^&l1i+ss+4-c$'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-qc9-^%#axeb4c-7f2zv2r4n@p(6tu+fr(16f5^&l1i+ss+4-c$')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = [
-    'socipoki.herokuapp.com'
-]
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'socipoki.herokuapp.com').split(',')
 
 # My values
 APP_NAME = "Socipoki"
@@ -127,18 +128,19 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
-PROJECT_ROOT   =   os.path.join(os.path.abspath(__file__))
-STATIC_ROOT  =   os.path.join(PROJECT_ROOT, 'staticfiles')
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
-# Extra lookup directories for collectstatic to find static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
+    os.path.join(BASE_DIR, 'static'),
 )
 
-#  Add configuration for static files storage using whitenoise
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = (
+    'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    if not DEBUG else
+    'django.contrib.staticfiles.storage.StaticFilesStorage'
+)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

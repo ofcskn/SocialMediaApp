@@ -30,9 +30,12 @@ class PathAndRename(object):
 
 # get ip address via the function
 def get_ip():
-    hostname=socket.gethostname()
-    ip=socket.gethostbyname(hostname)
-    return ip
+    try:
+        hostname = socket.gethostname()
+        ip = socket.gethostbyname(hostname)
+        return ip
+    except socket.gaierror:
+        return "127.0.0.1"
 
 class Post(models.Model):
     description = models.CharField(max_length=2056)
@@ -79,7 +82,7 @@ class Post(models.Model):
 class PostAction(models.Model):
     action_number = models.IntegerField(default=0) # default (0) is for like action. (1) is for saving post
     date = models.DateTimeField(default=datetime.now)
-    ip = models.CharField(max_length=256,default=get_ip())
+    ip = models.CharField(max_length=256, default=get_ip)
     user = models.ForeignKey(User,on_delete=models.CASCADE, related_name="acted_user")
     post = models.ForeignKey(Post,on_delete=models.CASCADE, related_name="post_for")
 

@@ -26,9 +26,12 @@ path_and_rename_user_avatar = PathAndRename("profile/")
 
 # get ip address via the function
 def get_ip():
-    hostname=socket.gethostname()
-    ip=socket.gethostbyname(hostname)
-    return ip
+    try:
+        hostname = socket.gethostname()
+        ip = socket.gethostbyname(hostname)
+        return ip
+    except socket.gaierror:
+        return "127.0.0.1"
 
 class User(AbstractUser):
     password = models.CharField(max_length=128, blank=True)
@@ -69,5 +72,5 @@ class UserFollower(models.Model):
     follower = models.ForeignKey(User,on_delete=models.CASCADE, related_name='follower')
     to = models.ForeignKey(User,on_delete=models.CASCADE, related_name='to')
     date = models.DateTimeField(default=datetime.now)
-    ip = models.CharField(max_length=256,default=get_ip())
+    ip = models.CharField(max_length=256, default=get_ip)
     is_accepted = models.BooleanField(default=False)
