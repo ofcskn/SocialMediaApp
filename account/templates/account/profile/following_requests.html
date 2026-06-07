@@ -10,8 +10,15 @@
   {% for req in data %}
   <div class="flex items-center justify-between py-3 border-b border-ig-border">
     <div class="flex items-center gap-3">
+      {% if req.follower.avatar %}
       <img class="w-10 h-10 rounded-full object-cover border border-ig-border"
-        src="/media/{% if req.follower.avatar %}{{req.follower.avatar}}{% else %}profile/default.png{% endif %}" alt="">
+        src="/media/{{ req.follower.avatar }}" alt="{{ req.follower.username }}">
+      {% else %}
+      <div class="w-10 h-10 rounded-full border border-ig-border flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+        style="background:var(--ig-blue, #0095f6);">
+        {{ req.follower.username|slice:":2"|upper }}
+      </div>
+      {% endif %}
       <div>
         <p class="text-sm font-semibold">@{{req.follower.username}}</p>
         <p class="text-xs" style="color:var(--ig-text-secondary);">{{req.follower.first_name}} {{req.follower.last_name}}</p>

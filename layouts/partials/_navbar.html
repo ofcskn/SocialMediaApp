@@ -26,8 +26,15 @@
 
     <a href="{% url 'core:get_user' user_name=user.username %}" class="nav-link-item">
       <div class="w-6 h-6 rounded-full overflow-hidden border border-ig-border flex-shrink-0">
+        {% if user.avatar %}
         <img class="w-full h-full object-cover"
-          src="/media/{% if user.avatar %}{{user.avatar}}{% else %}profile/default.png{% endif %}" alt="">
+          src="/media/{{ user.avatar }}" alt="{{ user.username }}">
+        {% else %}
+        <div class="w-full h-full flex items-center justify-center text-[10px] font-bold text-white"
+          style="background:var(--ig-blue, #0095f6);">
+          {{ user.username|slice:":2"|upper }}
+        </div>
+        {% endif %}
       </div>
       <span>Profile</span>
     </a>
@@ -73,8 +80,15 @@
   </a>
   <a href="{% url 'core:get_user' user_name=user.username %}" class="flex items-center justify-center p-2 text-ig-secondary">
     <div class="w-7 h-7 rounded-full overflow-hidden border border-ig-border">
+      {% if user.avatar %}
       <img class="w-full h-full object-cover"
-        src="/media/{% if user.avatar %}{{user.avatar}}{% else %}profile/default.png{% endif %}" alt="">
+        src="/media/{{ user.avatar }}" alt="{{ user.username }}">
+      {% else %}
+      <div class="w-full h-full flex items-center justify-center text-[10px] font-bold text-white"
+        style="background:var(--ig-blue, #0095f6);">
+        {{ user.username|slice:":2"|upper }}
+      </div>
+      {% endif %}
     </div>
   </a>
   {% else %}

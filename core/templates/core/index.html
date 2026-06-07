@@ -29,8 +29,15 @@
       <!-- Current user -->
       <div class="flex items-center justify-between mb-5">
         <a href="{% url 'core:get_user' user_name=user.username %}" class="flex items-center gap-3">
+          {% if user.avatar %}
           <img class="w-14 h-14 rounded-full object-cover border border-ig-border"
-            src="/media/{% if user.avatar %}{{user.avatar}}{% else %}profile/default.png{% endif %}" alt="">
+            src="/media/{{ user.avatar }}" alt="{{ user.username }}">
+          {% else %}
+          <div class="w-14 h-14 rounded-full border border-ig-border flex items-center justify-center text-lg font-bold text-white flex-shrink-0"
+            style="background:var(--ig-blue, #0095f6);">
+            {{ user.username|slice:":2"|upper }}
+          </div>
+          {% endif %}
           <div>
             <p class="text-sm font-semibold" style="color:#262626;">{{ user.username }}</p>
             <p class="text-sm" style="color:var(--ig-text-secondary);">{{ user.first_name }} {{ user.last_name }}</p>
@@ -48,8 +55,15 @@
           {% for u in newUsers %}
           <div class="flex items-center justify-between">
             <a href="{% url 'core:get_user' user_name=u.username %}" class="flex items-center gap-3">
+              {% if u.avatar %}
               <img class="w-8 h-8 rounded-full object-cover border border-ig-border"
-                src="/media/{% if u.avatar %}{{u.avatar}}{% else %}profile/default.png{% endif %}" alt="">
+                src="/media/{{ u.avatar }}" alt="{{ u.username }}">
+              {% else %}
+              <div class="w-8 h-8 rounded-full border border-ig-border flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                style="background:var(--ig-blue, #0095f6);">
+                {{ u.username|slice:":2"|upper }}
+              </div>
+              {% endif %}
               <div>
                 <p class="text-sm font-semibold leading-none mb-0.5" style="color:#262626;">{{ u.username }}</p>
               </div>
