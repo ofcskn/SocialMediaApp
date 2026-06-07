@@ -5,16 +5,7 @@
 <article class="bg-white border border-ig-border mb-6" style="max-width:470px;">
 
   <!-- Header -->
-  <div class="flex items-center justify-between px-4 py-3">
-    <a href="{% url 'core:get_user' user_name=post.posted_user.username %}"
-      class="flex items-center gap-3">
-      <img class="w-8 h-8 rounded-full object-cover border border-ig-border"
-        src="/media/{% if post.posted_user.avatar %}{{post.posted_user.avatar}}{% else %}profile/default.png{% endif %}"
-        alt="{{ post.posted_user.username }}">
-      <span class="text-sm font-semibold text-black">{{ post.posted_user.username }}</span>
-    </a>
-    <span class="text-xs" style="color:var(--ig-text-secondary);">{{ post.created_date|date:"M j" }}</span>
-  </div>
+  {% include 'post/partials/_post_user_header.html' %}
 
   <!-- Image -->
   <a href="{% url 'post:detail' permalink=post.hashed_permalink %}">

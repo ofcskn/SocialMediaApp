@@ -6,9 +6,16 @@
 
     <div class="flex items-start gap-2 flex-1 min-w-0">
       <a href="{% url 'core:get_user' user_name=comment.who_sent.username %}" class="flex-shrink-0">
-        <img class="w-7 h-7 rounded-full object-cover border border-ig-border"
-          src="/media/{% if comment.who_sent.avatar %}{{comment.who_sent.avatar}}{% else %}profile/default.png{% endif %}"
-          alt="{{ comment.who_sent.username }}">
+        {% if comment.who_sent.avatar %}
+          <img class="w-7 h-7 rounded-full object-cover border border-ig-border"
+            src="/media/{{ comment.who_sent.avatar }}"
+            alt="{{ comment.who_sent.username }}">
+        {% else %}
+          <div class="w-7 h-7 rounded-full border border-ig-border flex items-center justify-center text-xs font-bold text-white"
+            style="background:var(--ig-blue, #0095f6);">
+            {{ comment.who_sent.username|slice:":2"|upper }}
+          </div>
+        {% endif %}
       </a>
       <div class="comment_content flex-1 min-w-0">
         <p class="text-sm m-0">

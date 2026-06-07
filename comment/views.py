@@ -10,15 +10,13 @@ from .forms import PostCommentForm
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 from uuid import uuid4
-import socket
 import json
 
-# functions 
-# get ip address via the function
-def get_ip():
-    hostname=socket.gethostname()
-    ip=socket.gethostbyname(hostname)
-    return ip
+def get_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        return x_forwarded_for.split(',')[0].strip()
+    return request.META.get('REMOTE_ADDR', '127.0.0.1')
 
 class GetAllByPostView(View):
     template_name = 'comment/partials/_comment_for_post.html'
@@ -41,7 +39,7 @@ class SendView(View):
         # filling the form
         form = self.form_class(request.POST)
         if form.is_valid():
-            post_comment = PostComment(who_sent= current_user,for_post=post, ip= get_ip(), content=form.cleaned_data['content'])
+            post_comment = PostComment(who_sent= current_user,for_post=post, ip= get_ip(request), content=form.cleaned_data['content'])
             post_comment.save()
             return render(request, self.template_name, {"comment": post_comment})
         else:
@@ -72,7 +70,7 @@ class ReplyView(View):
         if form.is_valid():
             # get comments by id
             to_comment = get_object_or_404(PostComment, id=self.kwargs['id'])
-            comment = PostComment(content=form.cleaned_data['content'], who_sent=request.user, ip=get_ip(), sub_comment=to_comment, for_post=to_comment.for_post)
+            comment = PostComment(content=form.cleaned_data['content'], who_sent=request.user, ip=get_ip(request), sub_comment=to_comment, for_post=to_comment.for_post)
             comment.save()
             return render(request, self.template_name, {"comment": comment})
         else:
